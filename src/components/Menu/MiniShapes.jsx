@@ -1,21 +1,22 @@
 import { useAnimate } from 'framer-motion';
 import React, { useEffect } from 'react'
+import { useAppContext } from '../Animation/Animation';
 
-function MiniShapes({isClick, width, setWidth}) {
-
+function MiniShapes() {
+  const appContext = useAppContext();
   const [scope, animate] = useAnimate();
 
   useEffect(() => {
-   if (width < 700) {
-    animate('.left', isClick ? {rotate : 360, x: -40} : {rotate : 0}, { duration: 10 });
-    animate('.right', isClick ? {rotate : 360, x: 40} : {rotate : 0}, { duration: 10 });
+   if (appContext.width < 700) {
+    animate('.left', appContext.isClick ? {rotate : 360, x: -40} : {rotate : 0}, { duration: 10 });
+    animate('.right', appContext.isClick ? {rotate : 360, x: 40} : {rotate : 0}, { duration: 10 });
    }
 
    else {
-    animate('.left', isClick ? {rotate : 360, x: -50} : {rotate : 0}, { duration: 10 });
-    animate('.right', isClick ? {rotate : 360, x: 50} : {rotate : 0}, { duration: 10 });
+    animate('.left', appContext.isClick ? {rotate : 360, x: -50} : {rotate : 0}, { duration: 10 });
+    animate('.right', appContext.isClick ? {rotate : 360, x: 50} : {rotate : 0}, { duration: 10 });
    }
-  }, [isClick, animate, width])
+  }, [appContext.isClick, animate, appContext.width])
 
   return (
     <div className='block-shapes' ref={scope}>

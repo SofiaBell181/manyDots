@@ -2,9 +2,10 @@ import React, { useEffect, useLayoutEffect, useRef } from 'react'
 import { gsap } from 'gsap';
 import MiniShapes from './MiniShapes';
 import { TextPlugin } from 'gsap/all';
+import { useAppContext } from '../Animation/Animation';
 
-function Menu({children, addAnimation, index, setMove, isClick, startGame, restart, setRestart, setCount, width, setWidth}) {
-    
+function Menu({children, addAnimation, index , startGame }) {
+    const appContext = useAppContext();
     const shapes = useRef(null);
     gsap.registerPlugin(TextPlugin);
     
@@ -21,7 +22,7 @@ function Menu({children, addAnimation, index, setMove, isClick, startGame, resta
   }, [addAnimation, index]);
 
   useEffect(() => {
-    if(isClick === true && width > 500) {
+    if(appContext.isClick === true && appContext.width > 500) {
       const ctx = gsap.context(() => {
         gsap.to(".btnRestart", { 
         text: `reStart`,
@@ -37,7 +38,7 @@ function Menu({children, addAnimation, index, setMove, isClick, startGame, resta
       return () =>  ctx.revert()
     }
 
-    else if (isClick === true && width <= 500) {
+    else if (appContext.isClick === true && appContext.width <= 500) {
       const ctx = gsap.context(() => {
         gsap.to(".btnRestart-mb", { 
           text: `reStart`,
@@ -55,21 +56,21 @@ function Menu({children, addAnimation, index, setMove, isClick, startGame, resta
 
     else return;
 
-  }, [isClick, width])
+  }, [appContext.isClick, appContext.width])
 
 
   const restartGame = () => {
-    setRestart(!restart);
-    setCount(0)
+    appContext.setRestart(!appContext.restart);
+    appContext.setCount(0)
   }
 
 
 
   return ( <>
             <div className='block-menu' ref={shapes}>{children}
-                <MiniShapes isClick = {isClick} width={width}/>
-                <button className={width <= 500 ? 'btnGame-mb' : 'btnGame'} onClick={startGame} onMouseEnter={() => setMove(true)}  onMouseLeave={() => setMove(false)}>Start</button>
-                <button className={width <= 500 ? 'btnRestart-mb' : 'btnRestart'} onClick={restartGame} onMouseEnter={() => setMove(true)}  onMouseLeave={() => setMove(false)}></button>
+                <MiniShapes  width={appContext.width}/>
+                <button className={appContext.width <= 500 ? 'btnGame-mb' : 'btnGame'} onClick={startGame} onMouseEnter={() => appContext.setMove(true)}  onMouseLeave={() => appContext.setMove(false)}>Start</button>
+                <button className={appContext.width <= 500 ? 'btnRestart-mb' : 'btnRestart'} onClick={restartGame} onMouseEnter={() => appContext.setMove(true)}  onMouseLeave={() => appContext.setMove(false)}></button>
             </div>
         </>
     

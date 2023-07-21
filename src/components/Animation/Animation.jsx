@@ -1,16 +1,38 @@
-import React, { useLayoutEffect, useCallback, useState } from 'react'
+import React, { useLayoutEffect, useCallback, useState, createContext, useContext } from 'react'
 import {gsap} from 'gsap';
 import LoadingLine from './LoadingLine';
 import CrossLines from './CrossLines';
 import Shapes from './Shapes';
 import Menu from '../Menu/Menu';
 
+
+ const AppContext = createContext(
+    // {
+    //     isClick : false,
+    //     setIsClick: () => {},
+    //     isMove : false,
+    //     setMove : () => {},
+    //     restart : false,
+    //     setRestart : () => {},
+    //     count : null,
+    //     setCount : () => {},
+    //     disabled : true,
+    //     setDisabled : () => {},
+    //     width : null,
+    //     setWidth : () => {},
+    // }
+    )
+
+export const useAppContext = () => useContext(AppContext)
+
 function Animation() {
+
+    const Provider = AppContext.Provider;
 
     const [isClick, setIsClick] = useState(false);
     const [isMove, setMove] = useState(false);
     const [restart, setRestart] = useState(false);
-    const [count, setCount] = useState(0);
+    const [count, setCount] = useState(null);
     const [disabled, setDisabled] = useState(true);
     const [width, setWidth] = useState(null);
     const [tl, setTl] = useState();
@@ -36,15 +58,25 @@ function Animation() {
 
     
   return (
-        <>
-            <div className='block-animation'>
-                <Menu addAnimation={addAnimation} startGame={startGame} setMove={setMove} isClick={isClick} setIsClick={setIsClick} index={3} restart={restart} setRestart={setRestart} setCount={setCount} disabled={disabled} setDisabled={setDisabled}  width={width} />
-                <LoadingLine addAnimation={addAnimation} isClick={isClick} index={0}/> 
-                <Shapes addAnimation={addAnimation} startGame={startGame} isMove={isMove} setIsClick={setIsClick} isClick={isClick} index={2} restart={restart} setRestart={setRestart} count={count} setCount={setCount} disabled={disabled} setDisabled={setDisabled} width={width} setWidth={setWidth}>
-                    <CrossLines addAnimation={addAnimation}  width={width} isClick={isClick} tl={tl} index={1}/>
-                </Shapes>
-            </div>
-        </>
+    <Provider value={{
+        isClick, setIsClick, 
+        isMove, setMove,
+        restart, setRestart,
+        count, setCount,
+        disabled, setDisabled,
+        width, setWidth
+    }}>
+        <div className='block-animation'>
+            <Menu addAnimation={addAnimation} startGame={startGame} index={3} />
+            <LoadingLine addAnimation={addAnimation} index={0}/> 
+            <Shapes addAnimation={addAnimation} startGame={startGame} index={2}>
+            <CrossLines addAnimation={addAnimation}  tl={tl} index={1}/>
+            </Shapes>
+        </div>
+    </Provider>
+        
+            
+       
   )
 }
 

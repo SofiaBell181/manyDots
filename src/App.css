@@ -497,9 +497,14 @@ text-shadow: 1px 0 #FFFFFF;
 }
 
 @media all and (min-width:1400px) {
+
+    .tl-scope {
+        width: 100%;
+    }
+
     .block-animation {
         width: 1200px;
-}
+    }
 
     .block-discription {
         width: auto;

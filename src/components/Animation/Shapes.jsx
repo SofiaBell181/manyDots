@@ -2,14 +2,16 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {gsap} from 'gsap';
 import {motion, useAnimate} from 'framer-motion'
 import CustomEase from "gsap/CustomEase";
+import { useAppContext } from './Animation';
 
-function useMenuAnimation(isMove) {
+function useMenuAnimation() {
   const [scope, animate] = useAnimate();
+  const appContext = useAppContext();
 
   useEffect(() => {
-    animate('.triangle', isMove ? {rotate : 90} : {rotate : 0}, { duration: 1 });
-    animate('.triangleLine', isMove ? {rotate : 90} : {rotate : 0}, { duration: 1 });
-  }, [isMove, animate]);
+    animate('.triangle', appContext.isMove ? {rotate : 90} : {rotate : 0}, { duration: 1 });
+    animate('.triangleLine', appContext.isMove ? {rotate : 90} : {rotate : 0}, { duration: 1 });
+  }, [appContext.isMove, animate]);
 
   useEffect(() => {
     animate('.triangleBig',{opacity: 1, x: -140}, {duration: 1.5, delay: 4.3 });
@@ -20,16 +22,19 @@ function useMenuAnimation(isMove) {
   return scope;
 }
 
-function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled, children, width, setWidth}) {
+function Shapes({ startGame, children }) {
+  const appContext = useAppContext();
+  const scope = useMenuAnimation();
+
   const container = useRef(null);
   const [clickedShape, setClickedShape] = useState('');
-  const scope = useMenuAnimation(isMove);
+
   const tl = useRef();
   gsap.registerPlugin(CustomEase);
 
 	useEffect(() => {
 		const handeResize = () => {
-			setWidth(window.innerWidth);
+			appContext.setWidth(window.innerWidth);
 		}
 		handeResize();
 		window.addEventListener('resize', handeResize);
@@ -37,10 +42,10 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
 		return () => {
 			window.removeEventListener('resize', handeResize)
 		}
-	}, [setWidth])
+	}, [appContext])
 
     useLayoutEffect(() => {
-        if(width>= 900 && (restart === true || isClick === true)) { 
+        if(appContext.width>= 900 && (appContext.restart === true || appContext.isClick === true)) { 
         const ctx = gsap.context(() => {
         tl.current = gsap
         .timeline()
@@ -66,7 +71,7 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
           return () => ctx.revert(); 
         }
 
-        else if (((width < 900 && width > 600) && (restart === true || isClick === true))) { 
+        else if (((appContext.width < 900 && appContext.width > 600) && (appContext.restart === true || appContext.isClick === true))) { 
           const ctx = gsap.context(() => {
           tl.current = gsap
           .timeline()
@@ -93,7 +98,7 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
             return () => ctx.revert(); 
           }
 
-        else if ((width <= 600 && (restart === true || isClick === true))) { 
+        else if ((appContext.width <= 600 && (appContext.restart === true || appContext.isClick === true))) { 
             const ctx = gsap.context(() => {
             tl.current = gsap
             .timeline()
@@ -120,10 +125,10 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
               return () => ctx.revert(); 
             }
 
-    }, [isClick, restart, width])
+    }, [appContext.isClick, appContext.restart, appContext.width])
 
     useLayoutEffect(() => {
-      if(restart === true) {
+      if(appContext.restart === true) {
         setClickedShape('');
         const ctx = gsap.context(() => {
         gsap.to('.container-alert', {opacity : 0, duration: .1, zIndex: 0});
@@ -131,67 +136,67 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
        }, container) 
         return () => ctx.revert();
       }
-    }, [restart, setClickedShape])
+    }, [appContext.restart, setClickedShape])
 
     useLayoutEffect(() => {  
-      if(isClick === true) {
+      if(appContext.isClick === true) {
         const ctx = gsap.context(() => {
-            if(count === 1 && clickedShape === 'square-blue') {
+            if(appContext.count === 1 && clickedShape === 'square-blue') {
             gsap.to('.square-blue',  {opacity : 1, duration: .5});    
             }
 
-            else if(count === 1 && clickedShape !== 'square-blue') {
+            else if(appContext.count === 1 && clickedShape !== 'square-blue') {
             gsap.to('.square-blue',  {opacity : 1, delay: .5, duration: .5});    
             gsap.to('.container-alert', {opacity : 1, delay: 1, duration: .5, zIndex: 100});
             }
 
-            else if (count === 2 && clickedShape === 'triangleBig') {
+            else if (appContext.count === 2 && clickedShape === 'triangleBig') {
               gsap.to('.triangleBig',  {opacity : 1, duration: .5});
             }
 
-            else if (count === 2 && clickedShape !== 'triangleBig') {
+            else if (appContext.count === 2 && clickedShape !== 'triangleBig') {
             gsap.to('.triangleBig',  {opacity : 1, delay: .5, duration: .5});    
             gsap.to('.container-alert', {opacity : 1, delay: 1, duration: .5, zIndex: 100}) 
             }
 
-            else if (count === 3 && clickedShape === 'circlePink') {
+            else if (appContext.count === 3 && clickedShape === 'circlePink') {
               gsap.to('.circlePink',  {opacity : 1, duration: .5});
             }
 
-            if(count === 3 && clickedShape !== 'circlePink') {
+            if(appContext.count === 3 && clickedShape !== 'circlePink') {
             gsap.to('.circlePink',  {opacity : 1, delay: .5, duration: .5});    
             gsap.to('.container-alert', {opacity : 1, delay: 1, duration: .5, zIndex: 100}) 
             }
 
-            else if (count === 4 && clickedShape === 'square') {
+            else if (appContext.count === 4 && clickedShape === 'square') {
               gsap.to('.square',  {opacity : 1, duration: .5});
             }
 
-            else if(count === 4 && clickedShape !== 'square') {
+            else if(appContext.count === 4 && clickedShape !== 'square') {
             gsap.to('.square',  {opacity : 1, delay: .5, duration: .5});    
             gsap.to('.container-alert', {opacity : 1, delay: 1, duration: .5, zIndex: 100}) 
             }
 
-            else if (count === 5 && clickedShape === 'triangle') {
+            else if (appContext.count === 5 && clickedShape === 'triangle') {
               gsap.to('.btnGame-triangle',  {opacity : 1, duration: .5});
             }
 
-            else if(count === 5 && clickedShape !== 'triangle') {
+            else if(appContext.count === 5 && clickedShape !== 'triangle') {
             gsap.to('.btnGame-triangle',  {opacity : 1, delay: .5, duration: .5});    
             gsap.to('.container-alert', {opacity : 1, delay: 1, duration: .5, zIndex: 100}) 
             }
 
-            else if (count === 6 && clickedShape === 'circle') {
+            else if (appContext.count === 6 && clickedShape === 'circle') {
               gsap.to('.circle',  {opacity : 1, duration: .5});
               gsap.to('.container-alert', {opacity : 1, delay: 1, duration: .5, zIndex: 100}) 
             }
 
-            else if (count === 6 && clickedShape !== 'circle') {
+            else if (appContext.count === 6 && clickedShape !== 'circle') {
             gsap.to('.circle',  {opacity : 1, delay: .5, duration: .5});    
             gsap.to('.container-alert', {opacity : 1, delay: 1, duration: .5, zIndex: 100}) 
             }
 
-            else if (count > 6) {
+            else if (appContext.count > 6) {
               gsap.to('.container-alert', {opacity : 1, delay: 1, duration: .5, zIndex: 100})
             }
            
@@ -200,14 +205,13 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
       return () => ctx.revert();
       }
 
-    }, [count, clickedShape, isClick ])
+    }, [appContext.count, clickedShape, appContext.isClick ])
 
 
     const onClickDesc = (e) => {
-      console.log(e.target.parentNode.classList[0])
-      if(isClick === true) {
-        let countUser = count;
-         setCount(countUser+1); 
+      if(appContext.isClick === true) {
+        let countUser = appContext.count;
+         appContext.setCount(countUser+1); 
          setClickedShape(e.target.parentNode.classList[0])
     }
       else return;
@@ -352,7 +356,7 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
   return (
     <div className='tl-scope' ref={container} >
    {children}
-      <div className='container-shapes' onClick={onClickDesc} ref={scope}  disabled={disabled}  >
+      <div className='container-shapes' onClick={onClickDesc} ref={scope}  disabled={appContext.disabled}  >
       
       <svg className='square-blue shapePoint' 
         width="337"
@@ -452,9 +456,9 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
           </svg>
           <motion.svg
             className='triangleLine'
-            variants={width < 700 ? lineTriangleMobile : lineTriangle}
+            variants={appContext.width < 700 ? lineTriangleMobile : lineTriangle}
             initial='hidden'
-            animate={isClick === true ? hide : 'visible'}
+            animate={appContext.isClick === true ? hide : 'visible'}
             xmlns="http://www.w3.org/2000/svg"
             width="150"
             height="150"
@@ -481,7 +485,7 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
             cx='135'
             cy='135'
             r='134'
-            stroke={isClick === true ? 'transparent': 'white'}
+            stroke={appContext.isClick === true ? 'transparent': 'white'}
             strokeWidth="1"
             variants={circleVariants}
           />
@@ -495,14 +499,14 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
             initial= {{
               opacity:0
             }}
-            animate={ isClick === true ? {
+            animate={ appContext.isClick === true ? {
               opacity: 0.7,
             } :
             {
               opacity:1,
             }
             }
-            transition={ isClick === true ? {
+            transition={ appContext.isClick === true ? {
               delay: 2.5,
               duration: 1.5
             } :
@@ -526,7 +530,7 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
           xmlns="http://www.w3.org/2000/svg">
             <motion.path
             d="M0 35C0 15.67 15.67 0 35 0H215C234.33 0 250 15.67 250 35V215C250 234.33 234.33 250 215 250H35C15.67 250 0 234.33 0 215V35Z"
-            stroke={isClick === true ? 'transparent': 'white'}
+            stroke={appContext.isClick === true ? 'transparent': 'white'}
             variants={squareVariants}
             />
             <motion.path
@@ -536,7 +540,7 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
             initial= {{
               opacity:0,
             }}
-            animate={ isClick === true ? {
+            animate={ appContext.isClick === true ? {
               opacity: 0.7,
             } :
             {
@@ -544,7 +548,7 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
             }
             }
       
-            transition={isClick === true ? {
+            transition={appContext.isClick === true ? {
               delay: 3,
               duration: 2
             } :
@@ -588,9 +592,9 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
 
         <motion.svg  
           className='circleLine shapePoint'
-          variants={width < 700 ? lineVariantsMobile : lineVariants}
+          variants={appContext.width < 700 ? lineVariantsMobile : lineVariants}
           initial='hidden'
-          animate={isClick === true ? hide : 'visible'}
+          animate={appContext.isClick === true ? hide : 'visible'}
           width="270"
           height="270"
           viewBox="0 0 270 270"
@@ -607,9 +611,9 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
 
         <motion.svg 
           className='squareLine shapePoint'
-          variants={width < 700 ? lineSquareMobile :lineSquare}
+          variants={appContext.width < 700 ? lineSquareMobile :lineSquare}
           initial='hidden'
-          animate={isClick === true ? hide : 'visible'}
+          animate={appContext.isClick === true ? hide : 'visible'}
           width="225"
           height="225"
           viewBox="0 0 225 225"
@@ -628,11 +632,11 @@ function Shapes({isMove, startGame, isClick, restart, count, setCount, disabled,
       <div className='container-alert'>
         <div className='alert'>
           <div className='alert-header'>
-            <p>{(count === 6 && clickedShape === 'circle') ? 'You win!' : 'Game over'}</p>
+            <p>{(appContext.count === 6 && clickedShape === 'circle') ? 'You win!' : 'Game over'}</p>
           </div>
           <div className='score'>
             <p>Score</p>
-            <p>{count}</p>
+            <p>{appContext.count}</p>
           </div>
         </div>
       </div>

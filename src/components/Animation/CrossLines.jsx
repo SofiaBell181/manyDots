@@ -1,8 +1,10 @@
 import React, { useRef, useLayoutEffect, useState, useEffect } from 'react'
 import {gsap} from 'gsap';
+import { useAppContext } from './Animation';
 
 
-function CrossLines({children, addAnimation, index, isClick, width}) {
+function CrossLines({children, addAnimation, index }) {
+    const appContext = useAppContext();
     const scope = useRef();
     const sc = useRef();
     const [line, setLine] = useState([]);
@@ -23,7 +25,7 @@ function CrossLines({children, addAnimation, index, isClick, width}) {
     },[])
 
     useLayoutEffect(() => {
-      if(width>= 700) {
+      if(appContext.width>= 700) {
         let ctx = gsap.context(() => {
             const animate = 
               gsap.to(".block-1", {
@@ -121,11 +123,11 @@ function CrossLines({children, addAnimation, index, isClick, width}) {
           return () => ctx.revert(); 
       }
     
-    }, [addAnimation, index, width]);
+    }, [addAnimation, index,appContext.width]);
 
     const tl = useRef();
     useEffect(() => {
-        if(isClick === true && width>= 700) {
+        if(appContext.isClick === true && appContext.width>= 700) {
         const ctx = gsap.context(() => {
         tl.current = gsap
         .timeline()
@@ -182,7 +184,7 @@ function CrossLines({children, addAnimation, index, isClick, width}) {
           return () => ctx.revert(); 
         }
 
-        else if(isClick === true && width < 700) {
+        else if(appContext.isClick === true && appContext.width < 700) {
             const ctx = gsap.context(() => {
             tl.current = gsap
             .timeline()
@@ -238,7 +240,7 @@ function CrossLines({children, addAnimation, index, isClick, width}) {
             }, scope); 
               return () => ctx.revert(); 
             }
-    }, [isClick, width])
+    }, [appContext.isClick, appContext.width])
 
 
   return (
