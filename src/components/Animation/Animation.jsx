@@ -7,20 +7,20 @@ import Menu from '../Menu/Menu';
 
 
  const AppContext = createContext(
-    // {
-    //     isClick : false,
-    //     setIsClick: () => {},
-    //     isMove : false,
-    //     setMove : () => {},
-    //     restart : false,
-    //     setRestart : () => {},
-    //     count : null,
-    //     setCount : () => {},
-    //     disabled : true,
-    //     setDisabled : () => {},
-    //     width : null,
-    //     setWidth : () => {},
-    // }
+    {
+        isClick : false,
+        setIsClick: () => {},
+        isMove : false,
+        setMove : () => {},
+        restart : false,
+        setRestart : () => {},
+        count : null,
+        setCount : () => {},
+        disabled : true,
+        setDisabled : () => {},
+        width : null,
+        setWidth : () => {},
+    }
     )
 
 export const useAppContext = () => useContext(AppContext)
